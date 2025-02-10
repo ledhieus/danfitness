@@ -4,9 +4,19 @@
 
 @layer components {
   .padding-layout {
-    @apply w-[1200px] m-auto;
+    @apply 2xl:w-[1600px] xl:w-[1200px] lg:w-[1000px] md:w-full  m-auto px-4;
   }
-  .bg-bold{
-    @apply bg-[#142b30]
-  }
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
