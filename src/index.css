@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .padding-layout {
+    @apply w-[1200px] m-auto;
+  }
+  .bg-bold{
+    @apply bg-[#142b30]
+  }
+}
