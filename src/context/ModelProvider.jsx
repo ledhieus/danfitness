@@ -22,7 +22,7 @@ function ModelProvider({ children }) {
     <ModelContext.Provider value={{setisShowing, setContent}}>
       {children}
       {isShowing && (
-        <div className="fixed inset-0">
+        <div className="fixed inset-0 z-[999]">
           <div
             className="absolute inset-0 flex items-center justify-center bg-slate-600/70"
             onClick={() => setisShowing(false)}

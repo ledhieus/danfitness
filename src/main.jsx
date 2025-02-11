@@ -7,6 +7,8 @@ import WorkoutPlanPage from "./page/WorkoutPlanPage";
 import ExercisePage from "./page/ExercisePage";
 import EscerciseTargetPage from "./page/EscerciseTargetPage";
 import ModelProvider from "./context/ModelProvider";
+import CreateExcerciseAuth from "./page/auth/CreateExcerciseAuth";
+import WorkoutForm from "./page/auth/WorkoutForm";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +32,14 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/auth/createExercise",
+    element: <CreateExcerciseAuth/>
+  },
+  {
+    path: "/auth/createPlanWokout",
+    element: <WorkoutForm/>
+  }
 ]);
 createRoot(document.getElementById("root")).render(
   <ModelProvider>
