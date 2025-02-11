@@ -4,23 +4,28 @@ import { Link } from "react-router-dom";
 import Product from "../components/Product";
 const HomePage = () => {
   const [planWorkoutList, setPlanWorkoutList] = useState([]);
+  const [activePlan, setActivePlan] = useState("body-weight")
   useEffect(() => {
     const fetchApi = async () => {
-      const data = await getWorkout("");
+      const data = await getWorkout(`?type=${activePlan}`);
       setPlanWorkoutList(data);
     };
     fetchApi();
-  }, []);
+  }, [activePlan]);
   return (
     <>
       <div className="mt-10">
         <div className="padding-layout">
-          <div className="flex items-center mb-10 ">
+          <div className="flex items-center mb-6 ">
             <div className="border flex-1 h-[1px] bg-black"></div>
             <p className="text-center font-bold lg:text-[40px] text-[32px] text-[#404040] mx-4">
               Lịch tập
             </p>
             <div className="border flex-1 h-[1px] bg-black"></div>
+          </div>
+          <div className="flex items-center md:text-[24px] text-[20px] text-[#404040] border-b mb-6  gap-4">
+            <p className={`py-4 px-2 cursor-pointer ${activePlan === "body-weight" ? "border-b-black border-b-2": "text-[#737272c5]"}`} onClick={()=>setActivePlan("body-weight")}>Lịch tập tại nhà</p>
+            <p className={`py-4 px-2 cursor-pointer ${activePlan === "gym" ? "border-b-black border-b-2": "text-[#737272c5]"}`} onClick={()=>setActivePlan("gym")}>Lịch tập Gym</p>
           </div>
           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 space-y-3 lg:space-y-0 lg:gap-6 gap-2">
             {planWorkoutList.map((item) => (
