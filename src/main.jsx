@@ -19,25 +19,25 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/lich-tap/:slugPlan",
+        path: "lich-tap/:slugPlan",
         element: <WorkoutPlanPage />,
       },
       {
-        path: "/bai-tap",
+        path: "bai-tap",
         element: <ExercisePage />,
       },
       {
-        path: "/bai-tap/:slugExercise",
+        path: "bai-tap/:slugExercise",
         element: <EscerciseTargetPage />,
       },
     ],
   },
   {
-    path: "/auth/createExercise",
+    path: "auth/createExercise",
     element: <CreateExcerciseAuth/>
   },
   {
-    path: "/auth/createPlanWokout",
+    path: "auth/createPlanWokout",
     element: <WorkoutForm/>
   }
 ]);
