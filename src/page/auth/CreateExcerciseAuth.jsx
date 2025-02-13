@@ -10,6 +10,7 @@ const CreateExcerciseAuth = () => {
     img: "",
     muschleId: "",
     primary: "",
+    type: "",
   });
   useEffect(() => {
     const fetchApi = async () => {
@@ -88,6 +89,20 @@ const CreateExcerciseAuth = () => {
               value={formData.primary}
               onChange={handleChange}
             />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">Tập ở đâu</label>
+            <select
+              name="type"
+              className="border border-gray-300 rounded-lg w-full p-2"
+              value={formData.type}
+              onChange={handleChange}
+            >
+              <option value="all">Tất cả</option>
+              <option value="gym">Gym</option>
+              <option value="home">Tại nhà</option>
+            </select>
           </div>
 
           <div>

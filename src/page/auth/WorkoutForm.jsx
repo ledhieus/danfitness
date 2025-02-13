@@ -1,241 +1,320 @@
+
+import { postWorkout } from "../../service/workout";
+import Input from "./Input";
 import { useState } from "react";
 
 const WorkoutForm = () => {
-  const [workout, setWorkout] = useState({
+  const [sessions, setSessions] = useState([]);
+  const [workoutInfo, setWorkoutInfo] = useState({
     name: "",
     slug: "",
     banner: "",
-    level: "",
+    level: "beginner",
     week: "",
     daysPerWeek: "",
     goal: "",
-    type: "",
-    plan: [],
+    type: "body-weight",
   });
 
-  const [newDay, setNewDay] = useState({
-    day: "",
-    dayName: "",
-    target: "",
-    exercise: [],
-  });
-
-  const [newExercise, setNewExercise] = useState({
-    exerciseId: "",
-    name: "",
-    gif: "",
-    set: "",
-    rest: "",
-    reps: "",
-  });
-
-  // Cập nhật thông tin chung
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setWorkout((prev) => ({
-      ...prev,
-      [name]: value,
-      slug:
-        name === "name" ? value.toLowerCase().replace(/\s/g, "-") : prev.slug,
-    }));
+    setWorkoutInfo({ ...workoutInfo, [e.target.name]: e.target.value });
   };
 
-  // Cập nhật thông tin ngày tập
-  const handleDayChange = (e) => {
-    const { name, value } = e.target;
-    setNewDay((prev) => ({ ...prev, [name]: value }));
+  const handleSessionChange = (sessionId, field, value) => {
+    setSessions((prev) =>
+      prev.map((s) => (s.id === sessionId ? { ...s, [field]: value } : s))
+    );
   };
 
-  // Cập nhật thông tin bài tập
-  const handleExerciseChange = (e) => {
-    const { name, value } = e.target;
-    setNewExercise((prev) => ({ ...prev, [name]: value }));
+  const handleExerciseChange = (sessionId, exerciseId, field, value) => {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === sessionId
+          ? {
+              ...session,
+              exercises: session.exercises.map((ex) =>
+                ex.id === exerciseId ? { ...ex, [field]: value } : ex
+              ),
+            }
+          : session
+      )
+    );
   };
 
-  // Thêm bài tập vào ngày tập
-  const addExercise = () => {
-    setNewDay((prev) => ({
-      ...prev,
-      exercise: [...prev.exercise, newExercise],
-    }));
-    setNewExercise({
-      exerciseId: "",
-      name: "",
-      gif: "",
-      set: "",
-      rest: "",
-      reps: "",
-    });
+  const addSession = () => {
+    setSessions([...sessions, { id: Date.now(), target: "", exercises: [] }]);
   };
 
-  // Thêm ngày tập vào kế hoạch
-  const addDay = () => {
-    setWorkout((prev) => ({
-      ...prev,
-      plan: [...prev.plan, newDay],
-    }));
-    setNewDay({ day: "", dayName: "", target: "", exercise: [] });
+  const addExercise = (sessionId) => {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === sessionId
+          ? {
+              ...session,
+              exercises: [
+                ...session.exercises,
+                {
+                  id: Date.now(),
+                  name: "",
+                  sets: "",
+                  reps: "",
+                  rest: "",
+                  gif: "",
+                },
+              ],
+            }
+          : session
+      )
+    );
   };
 
-  // Gửi dữ liệu lên Server
+  const removeExercise = (sessionId, exerciseId) => {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === sessionId
+          ? {
+              ...session,
+              exercises: session.exercises.filter((ex) => ex.id !== exerciseId),
+            }
+          : session
+      )
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(e);
-    // try {
-    //   const response = await fetch("https://your-api.com/workouts", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(workout),
-    //   });
-    //   const data = await response.json();
-    //   alert("Thêm lịch tập thành công!");
-    // } catch (error) {
-    //   console.error("Lỗi khi gửi dữ liệu:", error);
-    // }
+    const formattedData = {
+      id: Date.now().toString(),
+      ...workoutInfo,
+      plan: sessions.map((session) => ({
+        day: session.day,
+        slug: `day-${session.day}`,
+        dayName: `Ngày ${session.day}`,
+        target: session.target,
+        exercise: session.exercises.map((exercise) => ({
+          exerciseId: exercise.id.toString(),
+          gif: exercise.gif,
+          name: exercise.name,
+          set: exercise.sets,
+          rest: exercise.rest,
+          reps: exercise.reps,
+        })),
+      })),
+    };
+    try {
+          await postWorkout(formattedData);
+          alert("Lịch tập đã được tạo thành công! 🎉");
+          setSessions([]); // Reset form
+        } catch (error) {
+          alert("Có lỗi xảy ra, vui lòng thử lại!");
+          console.error("Lỗi khi tạo bài tập:", error);
+        }
   };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md"
-    >
-      <h2 className="text-xl font-bold mb-4">Thêm Lịch Tập Mới</h2>
-      <div className="space-y-3">
-        <input
-          type="text"
-          name="name"
-          placeholder="Tên lịch tập"
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="banner"
-          placeholder="Link ảnh banner"
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="level"
-          placeholder="Mức độ (Beginner, Intermediate...)"
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="number"
-          name="week"
-          placeholder="Số tuần"
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="number"
-          name="daysPerWeek"
-          placeholder="Số ngày tập mỗi tuần"
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="goal"
-          placeholder="Mục tiêu (Tăng cơ, giảm mỡ...)"
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-      </div>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Tạo lịch tập</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          <Input
+            title="Title"
+            name="name"
+            onChange={handleChange}
+            value={workoutInfo.name}
+          />
+          <Input
+            title="Slug"
+            name="slug"
+            onChange={handleChange}
+            value={workoutInfo.slug}
+          />
+          <Input
+            title="Banner"
+            name="banner"
+            onChange={handleChange}
+            value={workoutInfo.banner}
+          />
 
-      <h3 className="text-lg font-semibold mt-6">Thêm Ngày Tập</h3>
-      <div className="space-y-3">
-        <input
-          type="number"
-          name="day"
-          placeholder="Thứ tự ngày (1,3,5...)"
-          onChange={handleDayChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="dayName"
-          placeholder="Tên ngày (Thứ hai...)"
-          onChange={handleDayChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="target"
-          placeholder="Mục tiêu (Toàn thân...)"
-          onChange={handleDayChange}
-          className="w-full p-2 border rounded"
-        />
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Trình độ
+            </label>
+            <select
+              name="level"
+              onChange={handleChange}
+              value={workoutInfo.level}
+              className="w-full border rounded-lg p-2"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+
+          <Input
+            title="Tập bao nhiêu tuần"
+            name="week"
+            onChange={handleChange}
+            value={workoutInfo.week}
+          />
+          <Input
+            title="Bao nhiêu buổi 1 tuần"
+            name="daysPerWeek"
+            onChange={handleChange}
+            value={workoutInfo.daysPerWeek}
+          />
+          <Input
+            title="Mục tiêu"
+            name="goal"
+            onChange={handleChange}
+            value={workoutInfo.goal}
+          />
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Tập ở đâu
+            </label>
+            <select
+              name="type"
+              onChange={handleChange}
+              value={workoutInfo.type}
+              className="w-full border rounded-lg p-2"
+            >
+              <option value="body-weight">Tại nhà</option>
+              <option value="gym">Gym</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Lịch tập chi tiết
+          </h3>
+          <button
+            type="button"
+            onClick={addSession}
+            className="text-blue-600 font-medium hover:text-blue-800 mb-4"
+          >
+            + Thêm buổi tập
+          </button>
+
+          {sessions.map((session) => (
+            <div
+              key={session.id}
+              className="mt-4 space-y-3 bg-gray-100 p-4 rounded-lg"
+            >
+              <Input
+                title="Ngày"
+                value={session.day || ""}
+                onChange={(e) =>
+                  handleSessionChange(session.id, "day", e.target.value)
+                }
+              />
+              <Input
+                title="Mục tiêu"
+                value={session.target}
+                onChange={(e) =>
+                  handleSessionChange(session.id, "target", e.target.value)
+                }
+              />
+
+              <div className="bg-white p-4 rounded-lg shadow">
+                <button
+                  type="button"
+                  onClick={() => addExercise(session.id)}
+                  className="text-green-600 font-medium hover:text-green-800"
+                >
+                  + Thêm bài tập
+                </button>
+
+                <div className="mt-3 grid grid-cols-2 gap-4">
+                  {session.exercises.map((exercise) => (
+                    <div
+                      key={exercise.id}
+                      className="border p-3 rounded-lg bg-gray-50 relative"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => removeExercise(session.id, exercise.id)}
+                        className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                      >
+                        🗑️
+                      </button>
+                      <Input
+                        title="Gif"
+                        value={exercise.gif}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            session.id,
+                            exercise.id,
+                            "gif",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <Input
+                        title="Tên bài"
+                        value={exercise.name}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            session.id,
+                            exercise.id,
+                            "name",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <Input
+                        title="Số set"
+                        value={exercise.sets}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            session.id,
+                            exercise.id,
+                            "sets",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <Input
+                        title="Số rep"
+                        value={exercise.reps}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            session.id,
+                            exercise.id,
+                            "reps",
+                            e.target.value
+                          )
+                        }
+                      />
+                      <Input
+                        title="Thời gian nghỉ"
+                        value={exercise.rest}
+                        onChange={(e) =>
+                          handleExerciseChange(
+                            session.id,
+                            exercise.id,
+                            "rest",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <button
-          type="button"
-          onClick={addDay}
-          className="w-full bg-blue-500 text-white p-2 rounded"
+          type="submit"
+          className="w-full mt-4 bg-red-700 text-white py-2 font-bold text-[18px] rounded-md hover:bg-red-500"
         >
-          Thêm ngày tập
+          Tạo
         </button>
-      </div>
-
-      <h3 className="text-lg font-semibold mt-6">Thêm Bài Tập</h3>
-      <div className="space-y-3">
-        <input
-          type="text"
-          name="exerciseId"
-          placeholder="ID bài tập"
-          onChange={handleExerciseChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="name"
-          placeholder="Tên bài tập"
-          onChange={handleExerciseChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="gif"
-          placeholder="GIF bài tập"
-          onChange={handleExerciseChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="number"
-          name="set"
-          placeholder="Số set"
-          onChange={handleExerciseChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="rest"
-          placeholder="Thời gian nghỉ"
-          onChange={handleExerciseChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="reps"
-          placeholder="Số reps"
-          onChange={handleExerciseChange}
-          className="w-full p-2 border rounded"
-        />
-        <button
-          type="button"
-          onClick={addExercise}
-          className="w-full bg-green-500 text-white p-2 rounded"
-        >
-          Thêm bài tập
-        </button>
-      </div>
-
-      <button
-        type="submit"
-        className="mt-6 w-full bg-purple-600 text-white p-3 rounded-lg font-semibold"
-      >
-        Gửi lên server
-      </button>
-    </form>
+      </form>
+    </div>
   );
 };
 

@@ -11,7 +11,7 @@ const RootLayout = () => {
       );
 
       if (userResponse) {
-        window.location.href = "m.me/100504566338813"; // Thay bằng link hỗ trợ của bạn
+        window.location.href = "https://www.facebook.com/profile.php?id=100090592133117"; // Thay bằng link hỗ trợ của bạn
       }
     }, 10000); // 10 giây = 10000ms
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMuscleList } from "../service/muscle";
 import { Link } from "react-router-dom";
+import MiniBanner from "../components/MiniBanner";
 
 const ExercisePage = () => {
   const [muscleList, setMuscleList] = useState([]);
@@ -13,6 +14,7 @@ const ExercisePage = () => {
   }, []);
   return (
     <div className="padding-layout my-10">
+      <MiniBanner/>
       <div className="flex items-center mb-10 ">
         <div className="border flex-1 h-[1px] bg-black"></div>
         <p className="text-center font-bold lg:text-[40px] text-[32px] text-[#404040] mx-4">
