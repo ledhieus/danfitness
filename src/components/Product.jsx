@@ -1,23 +1,24 @@
-import { useEffect, useRef, useState } from "react";
-import { getProductList } from "../service/product";
+import {  useEffect, useRef } from "react";
+// import { getProductList } from "../service/product";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { useProductContext } from "../context/ProductProvider";
 
 const Product = () => {
-  const [productList, setProductList] = useState([]);
-
+  // const [productList, setProductList] = useState([]);
+  const { productList } = useProductContext()
   const swiperRef = useRef(null);
-  useEffect(() => {
-    const fetchApi = async () => {
-      const data = await getProductList("");
-      setProductList(data);
-    };
-    fetchApi();
-  }, []);
+  // useEffect(() => {
+  //   const fetchApi = async () => {
+  //     const data = await getProductList("");
+  //     setProductList(data);
+  //   };
+  //   fetchApi();
+  // }, []);
   useEffect(() => {
     if (swiperRef.current) {
       swiperRef.current.swiper.params.navigation.prevEl = ".custom-prev";

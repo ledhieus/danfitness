@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { getExerciseList } from "../service/exercise";
 import { useParams } from "react-router-dom";
 import { convertToVietnamese } from "../helper/convertVietnam";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { useModelContext } from "../context/ModelProvider";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getMuscleList } from "../service/muscle";
 import Product from "../components/Product";
 
@@ -90,40 +90,39 @@ const EscerciseTargetPage = () => {
             ))}
           </div>
           <div>
-            {exerciseList.length > 0 ? (
-              exerciseList.map((item) => (
-                <div
-                  key={item.id}
-                  className="border-b flex md:flex-row flex-col items-center md:justify-between py-4"
-                >
-                  <div className="lg:w-[350px] w-[250px]">
-                    <p className="font-medium uppercase">{item.name}</p>
-                    <p className="text-[#5a5a5a]">
-                      <span className="font-medium text-[#404040]">
-                        Nhóm cơ chính:{" "}
-                      </span>
-                      {item.primary}
-                    </p>
-                  </div>
-                  <div className="w-[120px]">
-                    <img src={item.img} className="w-full" />
-                  </div>
-                  <div
-                    className="flex items-center gap-2 cursor-pointer bg-[#CB1313] hover:bg-[#e84545] text-white px-2 py-1 rounded-md w-fit"
-                    onClick={() => {
-                      setisShowing(true), setContent(<img src={item.img} />);
-                    }}
-                  >
-                    <p>Xem chi tiết</p>
-                    <FontAwesomeIcon icon={faEye} />
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-[18px]">Không có bài tập</p>
-            )}
-            <div></div>
-          </div>
+                {exerciseList.length > 0 ? (
+                  exerciseList.map((item) => (
+                    <div
+                      key={item.id}
+                      className="border-b flex md:flex-row flex-col items-center md:justify-between py-4"
+                    >
+                      <div className="lg:w-[350px] w-[250px]">
+                        <p className="font-medium uppercase">{item.name}</p>
+                        <p className="text-[#5a5a5a]">
+                          <span className="font-medium text-[#404040]">
+                            Nhóm cơ chính:{" "}
+                          </span>
+                          {item.primary}
+                        </p>
+                      </div>
+                      <div className="w-[120px]">
+                        <img src={item.img} className="w-full" />
+                      </div>
+                      <div
+                        className="flex items-center gap-2 cursor-pointer bg-[#CB1313] hover:bg-[#e84545] text-white px-2 py-1 rounded-md w-fit"
+                        onClick={() => {
+                          setisShowing(true), setContent(<img src={item.img} />);
+                        }}
+                      >
+                        <p>Xem chi tiết</p>
+                        <FontAwesomeIcon icon={faEye} />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-[18px]">Không có bài tập</p>
+                )}
+              </div>
           <Product />
         </div>
       )}

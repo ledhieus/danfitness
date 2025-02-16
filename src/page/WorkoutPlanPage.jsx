@@ -16,7 +16,6 @@ const WorkoutPlanPage = () => {
     const target = item.target;
     return { day, target };
   });
-  console.log(days);
   const [dayActive, setDayActive] = useState(1);
   const planActive = workout[0]?.plan.filter((item) => item.day === dayActive);
 
